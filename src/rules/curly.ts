@@ -21,26 +21,21 @@ export default createEslintRule<Options, MessageIds>({
   defaultOptions: [],
   create: (context) => {
     function requireCurly(body: TSESTree.Statement | TSESTree.Expression): boolean {
-      if (!body)
-        return false
+      if (!body) return false
       // already has curly brackets
-      if (body.type === 'BlockStatement')
-        return true
+      if (body.type === 'BlockStatement') return true
       // nested statements
-      if (['IfStatement', 'WhileStatement', 'DoWhileStatement', 'ForStatement', 'ForInStatement', 'ForOfStatement'].includes(body.type))
-        return true
+      if (['IfStatement', 'WhileStatement', 'DoWhileStatement', 'ForStatement', 'ForInStatement', 'ForOfStatement'].includes(body.type)) return true
       const statement = body.type === 'ExpressionStatement'
         ? body.expression
         : body
       // multiline
-      if (statement.loc.start.line !== statement.loc.end.line)
-        return true
+      if (statement.loc.start.line !== statement.loc.end.line) return true
       return false
     }
 
     function wrapCurlyIfNeeded(body: TSESTree.Statement): void {
-      if (body.type === 'BlockStatement')
-        return
+      if (body.type === 'BlockStatement') return
       context.report({
         node: body,
         messageId: 'missingCurlyBrackets',
@@ -56,27 +51,23 @@ export default createEslintRule<Options, MessageIds>({
       const requires = [...bodies, ...additionalChecks].map(body => requireCurly(body))
 
       // If any of the bodies requires curly brackets, wrap all of them to be consistent
-      if (requires.some(i => i))
-        bodies.map(body => wrapCurlyIfNeeded(body))
+      if (requires.some(i => i)) bodies.map(body => wrapCurlyIfNeeded(body))
     }
 
     return {
       IfStatement(node) {
         const parent = node.parent
         // Already handled by the upper level if statement
-        if (parent.type === 'IfStatement' && parent.alternate === node)
-          return
+        if (parent.type === 'IfStatement' && parent.alternate === node) return
 
         const statements: TSESTree.Statement[] = []
         const tests: TSESTree.Expression[] = []
 
         function addIf(node: TSESTree.IfStatement): void {
           statements.push(node.consequent)
-          if (node.test)
-            tests.push(node.test)
+          if (node.test) tests.push(node.test)
           if (node.alternate) {
-            if (node.alternate.type === 'IfStatement')
-              addIf(node.alternate)
+            if (node.alternate.type === 'IfStatement') addIf(node.alternate)
             else
               statements.push(node.alternate)
           }

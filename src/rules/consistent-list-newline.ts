@@ -84,8 +84,7 @@ export default createEslintRule<Options, MessageIds>({
     }
 
     function getDelimiter(root: TSESTree.Node, current: TSESTree.Node): string | undefined {
-      if (root.type !== 'TSInterfaceDeclaration' && root.type !== 'TSTypeLiteral')
-        return
+      if (root.type !== 'TSInterfaceDeclaration' && root.type !== 'TSTypeLiteral') return
       const currentContent = context.sourceCode.text.slice(current.range[0], current.range[1])
       return currentContent.match(/(?:,|;)$/) ? undefined : ','
     }
@@ -111,8 +110,7 @@ export default createEslintRule<Options, MessageIds>({
       nextNode?: TSESTree.Node,
     ): void {
       const items = children.filter(Boolean) as TSESTree.Node[]
-      if (items.length === 0)
-        return
+      if (items.length === 0) return
 
       // Look for the opening bracket, we first try to get the first token of the parent node
       // and fallback to the token before the first item
@@ -128,14 +126,12 @@ export default createEslintRule<Options, MessageIds>({
               : node.callee,
         )
       }
-      if (startToken?.type !== 'Punctuator')
-        startToken = context.sourceCode.getTokenBefore(items[0])
+      if (startToken?.type !== 'Punctuator') startToken = context.sourceCode.getTokenBefore(items[0])
 
       const endToken = context.sourceCode.getTokenAfter(items[items.length - 1])
       const startLine = startToken!.loc.start.line
 
-      if (startToken!.loc.start.line === endToken!.loc.end.line)
-        return
+      if (startToken!.loc.start.line === endToken!.loc.end.line) return
 
       let mode: 'inline' | 'newline' | null = null
       let lastLine = startLine
@@ -163,8 +159,7 @@ export default createEslintRule<Options, MessageIds>({
         }
         else if (mode === 'inline' && currentStart !== lastLine) {
           const lastItem = items[idx - 1]
-          if (context.sourceCode.getCommentsBefore(item).length > 0)
-            return
+          if (context.sourceCode.getCommentsBefore(item).length > 0) return
           const content = context.sourceCode.text.slice(lastItem!.range[1], item.range[0])
           if (content.includes('\n')) {
             context.report({
@@ -206,10 +201,8 @@ export default createEslintRule<Options, MessageIds>({
       }
       else if (mode === 'inline' && endLoc.line !== lastLine) {
         // If there is only one multiline item, we allow the closing bracket to be on the a different line
-        if (items.length === 1 && !(multilineNodes as Set<AST_NODE_TYPES>).has(node.type))
-          return
-        if (context.sourceCode.getCommentsAfter(lastItem).length > 0)
-          return
+        if (items.length === 1 && !(multilineNodes as Set<AST_NODE_TYPES>).has(node.type)) return
+        if (context.sourceCode.getCommentsAfter(lastItem).length > 0) return
 
         const content = context.sourceCode.text.slice(lastItem.range[1], endRange)
         if (content.includes('\n')) {
@@ -261,8 +254,7 @@ export default createEslintRule<Options, MessageIds>({
         )
       },
       ArrowFunctionExpression: (node) => {
-        if (node.params.length <= 1)
-          return
+        if (node.params.length <= 1) return
         check(
           node,
           node.params,
@@ -300,19 +292,16 @@ export default createEslintRule<Options, MessageIds>({
         check(node, node.elements)
       },
       JSXOpeningElement(node) {
-        if (node.attributes.some(attr => attr.loc.start.line !== attr.loc.end.line))
-          return
+        if (node.attributes.some(attr => attr.loc.start.line !== attr.loc.end.line)) return
 
         check(node, node.attributes)
       },
       JSONArrayExpression(node: TSESTree.ArrayExpression) {
-        if (hasComments(node))
-          return
+        if (hasComments(node)) return
         check(node, node.elements)
       },
       JSONObjectExpression(node: TSESTree.ObjectExpression) {
-        if (hasComments(node))
-          return
+        if (hasComments(node)) return
 
         check(node, node.properties)
       },
@@ -327,8 +316,7 @@ export default createEslintRule<Options, MessageIds>({
 
     ;(Object.keys(options) as KeysOptions[])
       .forEach((key) => {
-        if (options[key] === false)
-          delete listenser[key]
+        if (options[key] === false) delete listenser[key]
       })
 
     return listenser

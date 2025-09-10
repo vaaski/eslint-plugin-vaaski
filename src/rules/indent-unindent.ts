@@ -48,12 +48,9 @@ export default createEslintRule<Options, MessageIds>({
     return {
       TaggedTemplateExpression(node) {
         const id = node.tag
-        if (!id || id.type !== 'Identifier')
-          return
-        if (!tags.includes(id.name))
-          return
-        if (node.quasi.quasis.length !== 1)
-          return
+        if (!id || id.type !== 'Identifier') return
+        if (!tags.includes(id.name)) return
+        if (node.quasi.quasis.length !== 1) return
         const quasi = node.quasi.quasis[0]
         const value = quasi.value.raw
         const lineStartIndex = context.sourceCode.getIndexFromLoc({

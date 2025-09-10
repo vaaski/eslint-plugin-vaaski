@@ -27,7 +27,6 @@ export default antfu(
   // replace local config
   .onResolved((configs) => {
     configs.forEach((config) => {
-      if (config?.plugins?.antfu)
-        config.plugins.antfu = local
+      if (config?.plugins?.antfu) config.plugins.antfu = local
     })
   })

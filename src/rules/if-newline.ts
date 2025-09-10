@@ -1,7 +1,7 @@
 import { createEslintRule } from '../utils'
 
 export const RULE_NAME = 'if-newline'
-export type MessageIds = 'missingIfNewline'
+export type MessageIds = 'extranousIfNewline'
 export type Options = []
 
 export default createEslintRule<Options, MessageIds>({
@@ -9,32 +9,32 @@ export default createEslintRule<Options, MessageIds>({
   meta: {
     type: 'layout',
     docs: {
-      description: 'Newline after if',
+      description: 'No newline after braceless if',
     },
     fixable: 'whitespace',
     schema: [],
     messages: {
-      missingIfNewline: 'Expect newline after if',
+      extranousIfNewline: 'Expected no newline after braceless if',
     },
   },
   defaultOptions: [],
   create: (context) => {
     return {
       IfStatement(node) {
-        if (!node.consequent)
-          return
-        if (node.consequent.type === 'BlockStatement')
-          return
-        if (node.test.loc.end.line === node.consequent.loc.start.line) {
+        if (!node.consequent) return
+        if (node.consequent.type === 'BlockStatement') return
+        if (node.test.loc.end.line !== node.consequent.loc.start.line) {
           context.report({
             node,
             loc: {
               start: node.test.loc.end,
               end: node.consequent.loc.start,
             },
-            messageId: 'missingIfNewline',
+            messageId: 'extranousIfNewline',
             fix(fixer) {
-              return fixer.replaceTextRange([node.consequent.range[0], node.consequent.range[0]], '\n')
+              const sourceCode = context.sourceCode
+              const tokenAfterTest = sourceCode.getTokenAfter(node.test)
+              return fixer.replaceTextRange([tokenAfterTest!.range[1], node.consequent.range[0]], ' ')
             },
           })
         }

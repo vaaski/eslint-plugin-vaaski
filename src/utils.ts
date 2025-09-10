@@ -4,16 +4,16 @@ import type { Rule } from 'eslint'
 
 // @keep-sorted
 const hasDocs = [
-  'consistent-chaining',
-  'consistent-list-newline',
-  'curly',
+  // 'consistent-chaining',
+  // 'consistent-list-newline',
+  // 'curly',
   'if-newline',
-  'import-dedupe',
-  'indent-unindent',
-  'top-level-function',
+  // 'import-dedupe',
+  // 'indent-unindent',
+  // 'top-level-function',
 ]
 
-const blobUrl = 'https://github.com/antfu/eslint-plugin-antfu/blob/main/src/rules/'
+const blobUrl = 'https://github.com/vaaski/eslint-plugin-vaaski/blob/main/src/rules/'
 
 export type RuleModule<
   T extends readonly unknown[],
@@ -91,8 +91,7 @@ export const createEslintRule = RuleCreator(
 const warned = new Set<string>()
 
 export function warnOnce(message: string): void {
-  if (warned.has(message))
-    return
+  if (warned.has(message)) return
   warned.add(message)
   console.warn(message)
 }

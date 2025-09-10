@@ -52,8 +52,7 @@ export default createEslintRule<Options, MessageIds>({
         let root: TSESTree.Node = node
         while (root.parent && (root.parent.type === 'MemberExpression' || root.parent.type === 'CallExpression'))
           root = root.parent
-        if (knownRoot.has(root))
-          return
+        if (knownRoot.has(root)) return
         knownRoot.add(root)
 
         const members: TSESTree.MemberExpression[] = []
@@ -61,8 +60,7 @@ export default createEslintRule<Options, MessageIds>({
         while (current) {
           switch (current.type) {
             case 'MemberExpression': {
-              if (!current.computed)
-                members.unshift(current)
+              if (!current.computed) members.unshift(current)
               current = current.object
               break
             }
@@ -112,8 +110,7 @@ export default createEslintRule<Options, MessageIds>({
                 name: root.type,
               },
               fix(fixer) {
-                if (mode === 'multi')
-                  return fixer.insertTextAfter(tokenBefore, '\n')
+                if (mode === 'multi') return fixer.insertTextAfter(tokenBefore, '\n')
                 else
                   return fixer.removeRange([tokenBefore.range[1], token.range[0]])
               },
